@@ -13,7 +13,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
+    
+    //Hejhej här har micke skrivit
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
