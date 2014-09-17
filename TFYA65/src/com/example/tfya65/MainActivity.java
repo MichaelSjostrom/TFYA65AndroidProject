@@ -16,7 +16,8 @@ public class MainActivity extends Activity {
     
     //Hejhej här har micke skrivit
     //hejhej på dej micke, skrev oskar från sin superdupermagabautapc, kl 19.01, tisdagen den 16e september 2014
-
+    //fungerar pŒ min mac nu ocksŒ.. men min telefon krŠver api version 16 verkar det som.. :(
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
