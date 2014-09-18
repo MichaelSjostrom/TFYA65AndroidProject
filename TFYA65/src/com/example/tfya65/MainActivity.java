@@ -57,6 +57,7 @@ import android.app.Activity;
 import android.widget.LinearLayout;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.view.Menu;
@@ -65,8 +66,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Context;
 import android.util.Log;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.media.MediaPlayer;
+import android.media.ToneGenerator;
+
 
 import java.io.IOException;
 
@@ -80,10 +86,25 @@ public class MainActivity extends Activity {
 
     private PlayButton   mPlayButton = null;
     private MediaPlayer   mPlayer = null;
+    
+    private final int duration = 3;
+    private final int sampleRate = 8000;
+    private final int numSamples = duration * sampleRate;
+    
+    private final double sample[] = new double[numSamples];
+    private final double freqOfTone = 1000; //HZ
+    
+    private final byte generatedSnd[] = new byte[2 * numSamples];
+    
+    Handler handler = new Handler();
 
+    
     private void onRecord(boolean start) {
         if (start) {
-            startRecording();
+        	genTone();
+        	playSound();
+        	
+            //startRecording();
         } else {
             stopRecording();
         }
@@ -114,6 +135,7 @@ public class MainActivity extends Activity {
     }
 
     private void startRecording() {
+    	Log.i(LOG_TAG,"Here i am21312");
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -123,7 +145,7 @@ public class MainActivity extends Activity {
         try {
             mRecorder.prepare();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.i("log", "prepare() failed");
         }
 
         mRecorder.start();
@@ -142,7 +164,10 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 onRecord(mStartRecording);
                 if (mStartRecording) {
-                    setText("Stop recording");
+
+                	setText("Stop recording");
+                	
+                	
                 } else {
                     setText("Start recording");
                 }
@@ -164,6 +189,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 onPlay(mStartPlaying);
                 if (mStartPlaying) {
+                	Log.i(LOG_TAG,"Hejsan");
                     setText("Stop playing");
                 } else {
                     setText("Start playing");
@@ -218,4 +244,37 @@ public class MainActivity extends Activity {
             mPlayer = null;
         }
     }
+    
+	private void playSound(){
+    	
+		Log.i(LOG_TAG, "Inne22222");
+		final AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
+				AudioFormat.CHANNEL_OUT_MONO,
+    			AudioFormat.ENCODING_PCM_16BIT, numSamples, AudioTrack.MODE_STATIC);
+		audioTrack.write(generatedSnd, 0, generatedSnd.length);
+		audioTrack.play();
+    	
+    }
+	
+	private void genTone(){
+		
+		for(int i = 0; i < numSamples; i++){
+			sample[i] = Math.sin(2 * Math.PI * i / (sampleRate/freqOfTone));
+		}
+		
+		int idx = 0;
+		for(final double dVal : sample){
+			
+			final short val = (short)((dVal * 32767));
+			
+			generatedSnd[idx++] = (byte) (val & 0x00ff);
+			generatedSnd[idx++] = (byte) ((val & 0xff0) >>> 8);
+			
+		}
+		
+		
+	}
+    
+ 
+    
 }
