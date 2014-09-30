@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
     private MediaPlayer   mPlayer = null;
     
     private final int duration = 3;
-    private final int sampleRate = 8000;
+    private final int sampleRate = 4000;
     private final int numSamples = duration * sampleRate;
     
     private final double sample[] = new double[numSamples];
